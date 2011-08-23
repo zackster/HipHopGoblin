@@ -1,0 +1,242 @@
+/* CSS Document */
+html{color:#000;background:#FFF;}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,textarea,p,blockquote,th,td{margin:0;padding:0;}table{border-collapse:collapse;border-spacing:0;}fieldset,img{border:0;}address,caption,cite,code,dfn,em,strong,th,var,optgroup{font-style:inherit;font-weight:inherit;}del,ins{text-decoration:none;}li{list-style:none;}caption,th{text-align:left;}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal;}q:before,q:after{content:'';}abbr,acronym{border:0;font-variant:normal;}sup{vertical-align:baseline;}sub{vertical-align:baseline;}legend{color:#000;}input,button,textarea,select,optgroup,option{font-family:inherit;font-size:inherit;font-style:inherit;font-weight:inherit;}input,button,textarea,select{font-size:100%;}
+a {outline: none;} /* Gets rid of Firefox's dotted borders */
+a img {border: none;} /* Gets rid of IE's blue borders */
+
+html {
+	background-image:url(bghurtsmyeyes.png);
+	background-repeat: repeat-x repeat-y;
+}
+
+body {
+	margin:0px;
+}
+
+a {
+	color: #ddd;
+	text-decoration: none;
+}
+
+a:hover, a:active {
+	color: #666;
+}
+a:active{
+  position:relative;
+  top: 1px;
+}
+a:focus{
+  color: #444;
+}
+
+.hide{display:none;}
+
+
+#main {
+	padding-top: 50px;
+	width: 500px;
+	margin: 0 auto;
+}
+
+#content, .page {
+	background-color: #fff;
+	padding: 25px;
+}
+
+#info {
+	color: #666;
+	line-height: 28px;
+}
+#title {
+	font-size: 30px;
+}
+
+#buttons{clear:both;}
+#buttons a {
+	display: block;
+	float: left;
+	font-face:Calibri;
+	font-size:30px;
+	margin-right: 16px;
+}
+#jplayer_play,#jplayer_pause {
+	width: 75px;
+}
+.clear {
+	clear: both;
+	height:0px;
+	width: 0px;
+	margin:0px;
+	padding:0px;
+}
+
+#header {
+	background-color:#333;
+	height:40px;
+}
+
+#login {
+	padding-top:10px;
+	float:right;
+	padding-right:5px;
+}
+
+#search {
+	float:left;
+	padding-top:10px;
+	padding-left:5px;
+}
+
+#search input{
+	height:20px;
+	width:100px;
+	background-color:#757575;
+	-webkit-border-radius:4px 4px 4px 4px;
+	-moz-border-radius:4px 4px 4px 4px;
+	margin-left:10px;
+	border:0;
+}
+
+#login input {
+	width:100px;
+	height:20px;
+	-webkit-border-radius:4px 4px 4px 4px;
+	-moz-border-radius:4px 4px 4px 4px;
+	margin-left:5px;
+	background-color:#757575;
+	border:0;
+}
+
+.button {
+	font-family:'Yanone Kaffeesatz', arial, serif; 
+	font-size:29px;
+	vertical-align:bottom; 
+	/*overflow:visible; */
+	font-size:1em; 
+	display:inline;  
+	margin:0; 
+	padding-right:10px; 
+	border:0; 
+	color:white; 
+	cursor:pointer;
+	background-color:#333!important;
+	width:50px!important;
+}
+
+#wrapper {
+	width:800px;
+	margin:auto;
+	padding-top:10px;
+}
+
+#logo {
+	margin-left:30px;
+	margin-top:0px;
+	cursor:pointer;
+	height:100px;
+}
+
+#logo h1 {
+	font-family:'Yanone Kaffeesatz', arial, serif; 
+	color:#333;
+	font-size:48px;
+	text-shadow: 1px 1px 1px #aaa;
+	clear:none;
+	width:300px;
+}
+
+#logo h2 {
+	font-family:'Yanone Kaffeesatz', arial, serif; 
+	color:#333;
+	font-size:38px;
+	text-shadow: 1px 1px 1px #aaa;
+	clear:none;
+	height:20px;
+	display:none;
+}
+
+#logo h2:hover {
+	color:#446;
+}
+
+#contact {
+	margin-left:260px;
+	margin-top:-60px;
+}
+
+#about {
+	margin-top:-50px;
+	margin-left:380px;
+}
+
+#donate {
+	margin-top:-50px;
+	margin-left:480px;
+}
+
+#logo h1:hover {
+	color:#446;
+	font-size:48px;
+	text-shadow: 1px 1px 1px #aaa;
+}
+
+#logo:hover h2 {
+	display:block;
+}
+
+#logo:hover #audioplayer {
+	margin-top:200px;
+}
+
+#pic {
+	float:left;
+	margin-left:80px;
+	margin-top:10px;
+	opacity:0.8;
+}
+
+#audioplayer {
+	height:300px;
+	width:500px;
+	border-style:solid;
+	border-width:0px;
+	-webkit-border-radius:40px 40px 40px 40px;
+	-webkit-box-shadow:4px 4px 4px #aaa;
+	-moz-border-radius:40px 40px 40px 40px;
+	-moz-box-shadow:4px 4px 4px #aaa;
+	margin:auto;
+	clear:none;
+	background-color:#fffffa;
+	color:#000;
+	margin-top:0px;
+}
+
+#jplayerbar {
+	margin:15px 50px 0px 50px;
+	/*background-color:#4B7A33;*/
+	opacity:0.5;
+	font-family:'Calibri', arial, serif; 
+	font-color: #000;
+}
+
+#audioplayer h3 {
+	font-family:'Yanone Kaffeesatz', arial, serif; 
+	color:#333;
+	font-size:20px;
+	margin-bottom:20px;
+	margin-left:50px;
+}
+
+#extras {
+	font-family:'Yanone Kaffeesatz', arial, serif; 
+	font-size:14px;
+	
+	width:85px;
+	margin:auto;
+	margin-top:30px;
+}
+
+/*Mixest orange selection :)*/
+::-moz-selection{background:#ffb300;}
+::selection{background:#ffb300;}
+code::-moz-selection{background:#ffb300;}
+code::selection{background:#ffb300;}

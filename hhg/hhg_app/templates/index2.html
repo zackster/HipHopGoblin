@@ -1,0 +1,159 @@
+<html>
+<head>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+<script type="text/javascript" src="js/jquery.jplayer.min.js"></script>
+<script type="text/javascript">
+
+var req = new XMLHttpRequest();
+
+function initPlayer(){
+	var jpPlayTime = $("#jplayer_play_time");
+	var jpTotalTime = $("#jplayer_total_time");
+	$("#jquery_jplayer").jPlayer({
+		ready: function() { next();
+			//$("#next").show();
+			//$("#heard").show();
+		},
+		volume: 50
+	}).jPlayer("onProgressChange", function(loadPercent, playedPercentRelative, playedPercentAbsolute, playedTime, totalTime) {
+		jpPlayTime.text($.jPlayer.convertTime(playedTime));
+		jpTotalTime.text($.jPlayer.convertTime(totalTime));
+	}).jPlayer("onSoundComplete", next);
+
+	$("#jplayer_next").click( function() {
+		next();
+		$(this).blur();
+		return false;
+	});
+
+}
+
+function next() {
+	var url = "random.php";
+	req.open("GET", url,true);
+	req.onreadystatechange = playTrack;
+	req.send(null);
+}
+
+function playTrack() {
+	if (req.readyState == 4) {
+		var song = eval('(' + req.responseText + ')');
+		$("#jquery_jplayer").jPlayer("setFile", song.filename).jPlayer("play");
+		$("#title").fadeOut(function(){$("#title").text(song.title);$("#title").fadeIn();});
+		$("#artist").fadeOut(function(){$("#artist").text(song.artist);$("#artist").fadeIn();});
+		document.title = song.title + ' by ' + song.artist + ' - Hip Hop Goblin';
+	}
+}
+
+function hearted(){
+	var heart = document.getElementById('h_a');
+	if (heart.style.color == "green"){
+		heart.style.color = "#333";
+	}else{
+		heart.style.color = "green";
+	}
+}
+
+function setInner(str){
+	var ex = document.getElementById('extras');
+	ex.innerHTML = str;
+}
+
+function expand_div() {
+	if ($("#audioplayer2").height() == 200){
+		$("#audioplayer2").animate({ 
+		height: "500px",
+			}, 500 );
+		$("#exp_button2").html('less');
+	}else{
+		$("#audioplayer2").animate({ 
+		height: "200px",
+			}, 500 );
+		$("#exp_button2").html('more');
+	}
+}
+<!--
+$(document).ready(function() {
+	initPlayer();
+	$("#logo h2").hide();
+	$("#logo").hover(function(){
+		$("#logo h2").show();
+		$("#logo h2").animate({opacity:1},600);
+	}, function(){
+		$("#logo h2").animate({opacity:0},600);
+	});
+
+});
+
+-->
+</script>
+<title>
+	Hip Hop Goblin
+</title>
+<link href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:regular' rel='stylesheet' type='text/css'>
+<link href="skin/jplayer.css" rel="stylesheet" type="text/css" />
+<link href="skin/default.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="header">
+	<div id="login">
+		<form>
+			<input type="text"><input type="password">
+			<input class="button" type="submit" value="Login">
+		</form>
+	</div>
+	<div id="search">
+		<form>
+			<input type="text">
+			<input class="button" type="submit" value="Search">
+		</form>
+	</div>
+</div>
+<div id="wrapper">
+	<div id="logo"><h1>hip hop goblin &#187;</h1>
+		<a href="#" onBlur="setInner('sick beats, dope rhymes')" onClick="setInner('hit us up on twitter.com/hiphopgoblin or at web@hiphopgoblin.com')">
+			<h2 id="contact">contact</h2>
+		</a>
+		<a href="#" onBlur="setInner('sick beats, dope rhymes')" onClick="setInner('well heres the story of HHG...')">
+			<h2 id="about">about</h2>
+		</a>
+		<a href="#" onBlur="setInner('sick beats, dope rhymes')" onClick="setInner('your generosity keeps the goblin running. paypal.com/hhg')">
+			<h2 id="donate">donate</h2>
+		</a>
+	</div>
+	<div id="audioplayer">
+		<div id="heart">203&nbsp;&nbsp;&nbsp;<a href="#" onClick="hearted()" id="h_a">&hearts;</a></div>
+		<div id="main">
+			<div id="jquery_jplayer"></div>
+			<div class="jp-single-player">
+				<div class="jp-interface"> 
+					<div class="jp-progress">
+						<div id="jplayer_load_bar">
+							<div id="jplayer_play_bar"></div>
+						</div>
+					</div>
+					<div id="times">
+						<div id="jplayer_play_time"></div>
+						<div id="jplayer_total_time"></div>
+					</div>
+					<div id="content"><span id="title"></span><br><span id="artist"></span></div>
+						
+				</div>
+			</div>
+		</div>		
+	</div>
+	<div id="expander">
+		<div id="buttons"> 
+			<a href="javascript:void(0);" id="null" tabindex="1">&nbsp;&nbsp;&nbsp;</a>
+			<a href="javascript:void(0);" id="jplayer_play" tabindex="1">Play</a>
+			<a href="javascript:void(0);" id="jplayer_pause" tabindex="1">Pause</a>
+			<a href="javascript:void(0);" id="jplayer_next" class="hide">Next</a>
+		</div>
+		<a href="#" onClick="expand_div()"><div id="exp_button">more</div></a>
+	</div>
+
+<div id="extras">sick beats, dope rhymes</div>
+
+</div>
+</body>
+</html>

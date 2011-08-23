@@ -1,0 +1,26 @@
+
+<html>
+<head>
+<link rel="stylesheet" href="/static/new-css/upload.css" type="text/css">
+<title>Login</title></head>
+<body>
+<img src="/static/new-images/flow_root2.png">
+<h2>Profile Picture (Coming Soon)</h2>
+{{user.username}}
+<!--<form action="/image/" method="post" enctype="multipart/form-data">{% csrf_token %}
+ <table>
+ </table>
+ <input type="submit" value="Upload" />
+</form>-->
+<a href="{% url avatar_change %}">Change your avatar</a>
+<h2>Edit Your Uploaded Songs</h2>
+{% for s in songs %}
+<h3>{{s.title}}</h3>
+<form action="/comment/{{s.id}}/" method="post">{% csrf_token %}
+Comment <input type="text" name="comment" value="{{s.comment}}"/>
+<input type="submit" class="submit" value="Submit" />
+</form>
+</br></br>
+{% endfor %}
+</body>
+</html>

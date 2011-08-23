@@ -1,0 +1,9 @@
+RewriteEngine On
+RewriteBase /
+RewriteCond %{HTTP_REFERER} !^http://www.hiphopgoblin.com/.*$ [NC]
+RewriteCond %{HTTP_REFERER} !^http://hiphopgoblin.com/.*$ [NC]
+#RewriteCond %{REQUEST_URI} ^*.mp3$
+#RewriteRule .* - [F]
+
+RewriteRule .*\.mp3$ - [F]
+

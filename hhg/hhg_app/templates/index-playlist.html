@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<link rel="shortcut icon" href="http://para.llel.us/favicon.ico" />
+<link rel="stylesheet" href="/static/new-css/style-august.css" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Permanent+Marker' rel='stylesheet' type='text/css'>
+<!--<script src="jquery-1.6.2.min.js"></script>-->
+<!-- jQuery framework and utilities -->
+<script type="text/javascript" src="/static/new-js/jquery-1.4.min.js"></script>
+<script type="text/javascript" src="/static/new-js/jquery-ui-1.7.2.min.js"></script>
+<script type="text/javascript" src="/static/new-js/jquery.easing.1.3.min.js"></script>
+<script type="text/javascript" src="/static/new-js/hoverIntent.min.js"></script>
+<script type="text/javascript" src="/static/new-js/jquery.bgiframe.min.js"></script>
+<!-- Drop down menus -->
+<script type="text/javascript" src="/static/new-js/superfish.min.js"></script>
+<script type="text/javascript" src="/static/new-js/supersubs.min.js"></script>
+<!-- Tooltips -->
+<script type="text/javascript" src="/static/new-js/jquery.cluetip.min.js"></script>
+<!-- Input labels -->
+<script type="text/javascript" src="/static/new-js/jquery.overlabel.min.js"></script>
+<!-- Anchor tag scrolling effects -->
+<script type="text/javascript" src="/static/new-js/jquery.scrollTo-min.js"></script>
+<script type="text/javascript" src="/static/new-js/jquery.localscroll-min.js"></script>
+<!-- Inline popups/modal windows -->
+<script type="text/javascript" src="/static/new-js/jquery.fancybox-1.2.6.pack.js"></script>
+<script type="text/javascript" src="/static/js/jquery.jplayer.min.js"></script>
+<script type="text/javascript">
+        var req = new XMLHttpRequest();
+	
+	function initPlayer(){
+		var jpPlayTime = $("#jplayer_play_time");
+		var jpTotalTime = $("#jplayer_total_time");
+		$("#jquery_jplayer").jPlayer({
+			ready: function() {
+				next({{first_play}});
+			},
+			swfPath:"/static/js",
+			nativeSupport:true,
+			warningAlerts: true, 
+			errorAlerts: true,
+		}).jPlayer("onProgressChange", function(loadPercent, playedPercentRelative, playedPercentAbsolute, playedTime, totalTime) {
+			jpPlayTime.text($.jPlayer.convertTime(playedTime));
+			jpTotalTime.text($.jPlayer.convertTime(totalTime));
+		}).jPlayer("onSoundComplete", next);
+	
+		$("#jplayer_next").click( function() {
+			next();
+			$(this).blur();
+			return false;
+		});
+                $("#jplayer_play").click( function() {
+                        $("#jplayer_pause").css("display","inline-block");
+                        $("#jplayer_play").css("display","none");
+                });
+                $("#jplayer_pause").click( function() {
+                        $("#jplayer_pause").css("display","none");
+                        $("#jplayer_play").css("display","inline-block");
+                });
+	}
+	
+	function next(id) {
+		if (id) {
+			var url = "/hot/" + id;
+	                req.open("GET", url ,true);
+	                req.onreadystatechange = playTrack;
+	                req.send(null);
+		}
+		else {
+                        var prev = $("#idholder").text();
+			var url = "getnext/"+prev+"/";
+			req.open("GET", url ,true);
+			req.onreadystatechange = playTrack;
+			req.send(null);
+		}
+	}
+	
+        function updateData(song, id, prev){
+               $("#id_"+prev).removeAttr("style");
+               $("#id_"+id).attr("style", "background-color:#808080;");
+               $.ajax({
+                    url: "/getdata/",
+                    data: {title: song},
+                    success: function(data){
+                           var json_data = JSON.parse(data);
+                           $("#artist_img").attr("src",json_data["api_image_url"]);
+                           $("#artist_img").removeAttr("style");
+                           $("#artist").fadeOut(function(){$("#artist").html(json_data["artist"]);$("#artist").fadeIn();});
+                           $("#title").fadeOut(function(){$("#title").html(json_data["name"]);$("#title").fadeIn();});
+                    }
+               });
+               $.ajax({
+                    url: "/getsimilars/",
+                    data: {title: song},
+                    success: function(data){
+                           $("#similars").html(data);
+                    }
+               });
+        }
+
+	function playTrack() {
+		if (req.readyState == 4) {
+			var song = eval('(' + req.responseText + ')');
+                        var prev = $("#idholder").text();
+                        $("#idholder").text(song.id);
+                        updateData(song.title, song.id, prev);
+			$("#jquery_jplayer").jPlayer("setFile", song.filename).jPlayer("play");
+			//$("#title").fadeOut(function(){$("#title").text(song.title);$("#title").fadeIn();});
+			//$("#artist").fadeOut(function(){$("#artist").text(song.artist);$("#artist").fadeIn();});
+			document.title = song.title + ' - Hip Hop Goblin';
+		}
+	}
+
+	$(document).ready(function() {
+		initPlayer();
+                $('#right').height($(window).height()-$('#header').height());
+                $('#left').height($(window).height()-$('#header').height());
+                $(window).resize(function(){
+                  $('#right').height($(window).height()-$('#header').height());
+                  $('#left').height($(window).height()-$('#header').height());
+                  $(".formbg").height($(window).height()-$('#header').height());
+                });
+                if($("#artist_img").attr("src") == "/static/images/loading.gif"){
+                  $("#artist_img").attr("style","width:100%;");
+                }
+		hideerrors();	
+	});
+        
+        function enter(event){
+           if(event.which==13){
+              var q = $('#searchform').val();
+              $.ajax({
+                    url: "/search/",
+                    data: {query: q},
+                    success: function(data){
+                           $("#right").html(data);
+                    }
+               });
+           }
+        }
+
+        function loginenter(event){
+          if(event.which==13){
+            $('#login').submit();
+          }
+        }
+
+        function register(){
+             $.ajax({
+                    url: "/getregisterform/",
+                    success: function(data){
+                           $("#right").html(data);
+                           $(".formbg").height($(window).height()-$('#header').height());
+                    }
+               });
+         }
+</script>
+
+</head>
+<body>
+<div id="idholder" style="display:none;"></div>
+<img src="images/jay-z.jpg" style="display:none;" id="jayz">
+<img src="images/tupac.jpg" style="display:none;" id="tupac">
+<img src="images/biggie.jpg" style="display:none;" id="biggie">
+<img src="images/nas.jpg" style="display:none;" id="nas">
+<div id="header">
+<!--<div id="loginform"><form method="post" action="/login/" id="login">{% csrf_token %}<input id="username" name="username" type="text"><input id="password" name="password" type="password" onkeypress="loginenter(event);"></form></div>-->
+</div>
+<div id="left">
+<div id="banner">
+<h1 id="futura"><img src="/static/images/flow-august.png" width="280">
+</div>
+<div id="left_left">
+<div id="artist_div"><img src="/static/images/loading.gif" id="artist_img"></div>
+<h3 id="artist"></h3>
+<br/><br/>
+<div id="similars">
+<!--
+{% for sim in sims %}
+<p class="similar">{{sim}}</p>
+{% endfor %}
+-->
+</div>
+</div>
+<div id="left_right">
+<p><h3 id="title">loading . . .</h3></p>
+<!--<p><h3 id="album">Life After Death</h3></p>-->
+<p><h2><span id="jplayer_play_time">0:00</span> / <span id="jplayer_total_time">0:00</span></h2></p>
+<div class="button" id="jplayer_play" style="display:none;"><h3>PLAY</h3></div>
+<div class="button" id="jplayer_pause"><h3>PAUSE</h3></div>
+&nbsp;<div class="button" id="jplayer_next"><h3>NEXT</h3></div>
+&nbsp;<div class="button" id="save_button"><h3>SAVE</h3></div>
+<br/><br/>
+<h3 class="smallh3">Search:</h3><input type="text" id="searchform" onkeypress="enter(event);"><br/>
+<a href="http://twitter.com/#!/hiphopgoblin" target="_blank" title="@hiphopgoblin"><img src="/static/images/twitterblue.png" width="45"></a>
+<a href="http://the.echonest.com" target="_blank"><img src="/static/images/enwhite.gif" width="100"/></a>
+<div id="audioplayer"><div id="jquery_jplayer"></div></div>
+</div>
+</div>
+
+<div id="right">
+  <div class="songbutton_center_top">{{playlistname}}</strong></div>
+  {% for song in top %}
+    {% if forloop.counter == 6%}
+    <a onClick="next({{song.id}});"><div class="songbutton_top" id="id_{{song.id}}"><strong>{{song.artist}}</strong> &bull; {{ song.title }}
+    </div></a>
+    {% else %}
+    <a onClick="next({{song.id}});"><div class="songbutton" id="id_{{song.id}}"><strong>{{song.artist}}</strong> &bull; {{ song.title }}
+    </div></a>
+    {% endif %}
+    {% if forloop.counter == 5 %}
+    <div id="maybach"></div>
+    {% endif %}
+  {% endfor %}
+</div>
+</body>
+</html>

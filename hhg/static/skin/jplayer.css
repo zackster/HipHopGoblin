@@ -1,0 +1,101 @@
+div.jp-progress {
+        display:none;	
+	overflow:hidden;
+	background-color: #fffffa;
+	width:18em;
+	height:1em;
+}
+div#jplayer_load_bar {
+        display:none;
+	background-color: #f4f9f5;
+	width:0px;
+	height:1em;
+	cursor: pointer;
+	-moz-border-radius:.6em;
+        -webkit-border-radius:.6em;
+
+}
+div#jplayer_play_bar {
+        display:none;
+	background:-webkit-gradient(
+    		linear,
+    		left bottom,
+    		left top,
+    		color-stop(0, rgb(22,64,22)),
+    		color-stop(1, rgb(18,199,75))
+	);
+	background:-moz-linear-gradient(
+    		center bottom,
+   		rgb(22,64,22) 0%,
+    		rgb(18,199,75) 100%
+	);
+	width:0px;
+	height:1em;
+	opacity:.62;
+	-moz-border-radius:.6em;
+	-webkit-border-radius:.6em;
+	
+}
+
+#jplayer_total_time {
+	float: left;
+	margin-left: 1em;
+	font-family: "Trebuchet MS", Arial, Helvetica, Garuda, sans-serif;
+	color: #666;
+	line-height: 28px;
+	font-size: 16px;
+}
+#jplayer_play_time {
+	float: left;
+	font-family: "Trebuchet MS", Arial, Helvetica, Garuda, sans-serif;
+	color: #666;
+	line-height: 28px;
+	font-size: 16px;
+}
+
+#jplayer_play,#jplayer_pause {
+	width: 2em;
+	font-family: "Trebuchet MS", Arial, Helvetica, Garuda, sans-serif;
+}
+
+#times {
+	font-family: "Liberation Sans", Arial, Helvetica, Garuda, sans-serif;
+	height: 25px;
+}
+
+a.jp-volume-min {
+	top:32px;
+	background: url("jplayer.blue.monday.jpg") 0 -170px no-repeat;
+	width:18px;
+	height:15px;
+}
+
+a.jp-volume-min:hover {
+	background: url("jplayer.blue.monday.jpg") -19px -170px no-repeat;
+}
+a.jp-volume-max {
+	top:32px;
+	background: url("jplayer.blue.monday.jpg") 0 -186px no-repeat;
+	width:18px;
+	height:15px;
+}
+
+a.jp-volume-max:hover {
+	background: url("jplayer.blue.monday.jpg") -19px -186px no-repeat;
+}
+
+div.jp-volume-bar {
+	position: absolute;
+	overflow:hidden;
+	top:37px;
+	background: url("jplayer.blue.monday.jpg") 0 -250px repeat-x;
+	width:46px;
+	height:5px;
+	cursor: pointer;
+}
+
+div.jp-volume-bar-value {
+	background: url("jplayer.blue.monday.jpg") 0 -256px repeat-x;
+	width:0px;
+	height:5px;
+}

@@ -1,0 +1,14 @@
+
+<html>
+<head>
+<link rel="stylesheet" href="/static/new-css/upload.css" type="text/css">
+<title>Upload Your Music</title></head>
+<body>
+<img src="/static/new-images/flow_root2.png">
+<h2>Upload Your Music</h2>
+<form action="/upload/" enctype="multipart/form-data" method="post">{% csrf_token %}
+{{uploader.as_p}}
+<input type="submit" class="submit" value="Submit" />
+</form>
+</body>
+</html>

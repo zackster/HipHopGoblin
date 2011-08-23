@@ -1,0 +1,14 @@
+
+<html>
+<head>
+<link rel="stylesheet" href="/static/new-css/upload.css" type="text/css">
+<title>Login</title></head>
+<body>
+<img src="/static/new-images/flow_root2.png">
+<h2>Login to HipHopGoblin</h2>
+<form action="/login/" enctype="multipart/form-data" method="post">{% csrf_token %}
+{{form.as_p}}
+<input type="submit" class="submit" value="Submit" />
+</form>
+</body>
+</html>

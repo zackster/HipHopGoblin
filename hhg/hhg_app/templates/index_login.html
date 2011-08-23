@@ -1,0 +1,443 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery.jplayer.min.js"></script>
+<!--<script language="JavaScript" src="http://www.geoplugin.net/javascript.gp" type="text/javascript"></script>-->
+<script type="text/javascript" src="http://www.google.com/jsapi/?key=ABQIAAAACtkr2i5rQG5ebcf-ZvpH7BS1Usn4xbezV19kQDrLJKHXbEQMixQAZxHTj8FLMwvYw3Jlk3oq2C98Jg"></script>
+<script type="text/javascript"src="http://www.google.com/uds/solutions/dynamicfeed/gfdynamicfeedcontrol.js"></script>
+<script type="text/javascript" src="/static/js/jquery.mousewheel-3.0.2.pack.js"></script>
+<script type="text/javascript" src="/static/js/jquery.fancybox-1.3.1.pack.js"></script>
+<script type="text/javascript">
+var req = new XMLHttpRequest();
+
+function initPlayer(){
+	var jpPlayTime = $("#jplayer_play_time");
+	var jpTotalTime = $("#jplayer_total_time");
+	$("#jquery_jplayer").jPlayer({
+		ready: function() {
+			next();
+			$("#next").show();
+			$("#heard").show();
+		},
+		volume: 50
+	}).jPlayer("onProgressChange", function(loadPercent, playedPercentRelative, playedPercentAbsolute, playedTime, totalTime) {
+		jpPlayTime.text($.jPlayer.convertTime(playedTime));
+		jpTotalTime.text($.jPlayer.convertTime(totalTime));
+	}).jPlayer("onSoundComplete", next);
+
+	$("#jplayer_next").click( function() {
+		next();
+		$(this).blur();
+		return false;
+	});
+}
+
+function next(id) {
+	if (id) {
+		var url = "/hot/" + id;
+                req.open("GET", url ,true);
+                req.onreadystatechange = playTrack;
+                req.send(null);
+	 }
+	else {
+		var url = "/random/";
+		req.open("GET", url ,true);
+		req.onreadystatechange = playTrack;
+		req.send(null);
+	}
+}
+
+function playTrack() {
+	if (req.readyState == 4) {
+		var song = eval('(' + req.responseText + ')');
+		$("#jquery_jplayer").jPlayer("setFile", song.filename).jPlayer("play");
+		$("#title").fadeOut(function(){$("#title").text(song.title);$("#title").fadeIn();});
+		//$("#artist").fadeOut(function(){$("#artist").text(song.artist);$("#artist").fadeIn();});
+		document.title = song.title + ' - Hip Hop Goblin';
+		$('#songid').html(song.id);
+                $('#count').html(song.count);
+		$('#h_a').css('color', '#333');
+		$('#jplayer_play_bar').animate({
+			opacity: 0.7
+		}, 200);
+	}
+}
+
+function hearted(){
+	var heart = document.getElementById('h_a');
+	if (heart.style.color == "green"){
+		heart.style.color = "#333";
+		var count = parseInt($('#count').html())-1;
+		$('#count').html(count);
+                $.ajax({
+                        type    : "GET",
+                        cache   : false,
+                        url     : "/like/" + $('#songid').html() + "/un",
+                        success: function(data) {
+                        }
+                });
+	}else{
+		heart.style.color = "green";
+		var count = parseInt($('#count').html())+1;
+		$('#count').html(count);
+                $.ajax({
+                        type    : "GET",
+                        cache   : false,
+                        url     : "/like/" + $('#songid').html() + "/",
+                        success: function(data) {
+                        }
+                });
+	}
+}
+
+function setInner(str){
+	var ex = document.getElementById('extras');
+	ex.innerHTML = str;
+}
+
+function expand_div() {
+	if ($("#audioplayer").height() == 180){
+		$("#audioplayer").animate({ 
+		height: "400px",
+			}, 300 );
+		$('#lowercontrols').css('display','block');
+		$('#lowercontrols').animate({
+		height: "200px",
+			}, 350);
+		$("#exp_button").html('less');
+	}else{
+		$("#exp_button").html('more');
+		$("#audioplayer").animate({ 
+			height: "180px",
+			}, 300 );
+		$('#lowercontrols').animate({
+			height: "0px",
+			}, 280 );
+		$('#lowercontrols').css('display','none');
+	}
+}
+
+function updatePlayer(id) {
+	// Update Player with playlist Information
+	// Expand Player DIV
+	if ($("#audioplayer").height() == 180){
+		$("#audioplayer").animate({ 
+		height: "400px",
+			}, 300 );
+		$('#lowercontrols').css('display','block');
+		$('#lowercontrols').animate({
+		height: "200px",
+			}, 350);
+		$("#exp_button").html('less');
+	}
+
+//        $.ajax({
+//                type    : "GET",
+//                cache   : false,
+//                url     : "/username/playlist/" + id,
+//                success: function(data) {
+			// This goes into the TODO: parse JSON response section... 
+			$('#lowerleft').empty();
+			//$('#lowerleft').append('<div style="text-align:center;font-size:22px;font-family:DroidSansRegular, arial, serif;"> Underground Stuff Playlist </div><br>');
+			$('#lowerleft').append('<table style="border:1px #415733 dotted;" id="lowertable"><tbody></tbody></table>');
+			$('#lowertable tbody').append('<tr class="row"><td>Song</td><td>Artist</td></tr>');
+			for(var i = 0; i < 15; i++){$('#lowertable tbody').append('<tr class="row"><td>Song '+(i+1)+'</td><td>Artist '+(i+1)+'</td></tr>');}		
+//		}
+//        });
+}
+
+
+function hideerrors() {
+	$("#err_required1").hide();
+	$("#err_required2").hide();
+	$("#err_required3").hide();
+}
+
+$(document).ready(function() {
+	initPlayer();
+
+	$('#title').css('font-size','16px');
+	$('#jplayer_play_bar').css('height', '20px');
+	$('#lowercontrols').css('height','0px');
+	$('#lowercontrols').hide();
+	hideerrors();
+
+
+	$("a#fregister").fancybox({
+		'padding'	: 0,
+		'width'		: 600,
+		'height'	: 450,
+		'autoDimensions': false,
+		'titleShow'	: false,
+		'onClosed'	: function() { hideerrors(); }
+	});
+
+	$("a#flogin").fancybox({
+		'padding'	: 0,
+		'width'		: 600,
+		'height'	: 300,
+		'autoDimensions': false,
+		'titleShow'	: false,
+		'onClosed'	: function() { hideerrors(); }
+	});
+
+    
+
+	$("#register_form").bind("submit", function() {
+
+	    $.fancybox.showActivity();
+
+		$.ajax({
+			type	: "POST",
+			cache	: false,
+			url	: "/register/",
+			data	: $(this).serializeArray(),
+			success: function(data) {
+				$.fancybox(data);
+			}
+		});
+
+		return false;
+	});
+});
+
+google.load("feeds", "1");
+
+function initialize() {
+	var feedControl = new google.feeds.FeedControl();
+	feedControl.addFeed("http://blog.hiphopgoblin.com/?feed=rss2");
+	feedControl.draw(document.getElementById("feedControl2"));
+}
+
+google.setOnLoadCallback(initialize);
+
+
+var timeout    = 500;
+var closetimer = 0;
+var ddmenuitem = 0;
+
+function jsddm_open()
+{  jsddm_canceltimer();
+   jsddm_close();
+   ddmenuitem = $(this).find('ul').css('visibility', 'visible');}
+
+function jsddm_close()
+{  if(ddmenuitem) ddmenuitem.css('visibility', 'hidden');}
+
+function jsddm_timer()
+{  closetimer = window.setTimeout(jsddm_close, timeout);}
+
+function jsddm_canceltimer()
+{  if(closetimer)
+   {  window.clearTimeout(closetimer);
+      closetimer = null;}}
+
+$(document).ready(function()
+{  $('#jsddm > li').bind('mouseover', jsddm_open)
+   $('#jsddm > li').bind('mouseout',  jsddm_timer)});
+
+document.onclick = jsddm_close;
+
+
+</script>
+<style type="text/css">
+#feedControl2 .gf-author,
+#feedControl2 .gf-spacer {
+    display : none;
+}
+
+#feedControl2 .gf-title {
+	font-size: 24px;
+	font-family:'DroidSansRegular', arial, serif; 
+}
+#feedControl2 { 
+	text-align:left;
+	float:left;
+	width:250px;	
+	font-family:'DroidSansRegular', arial, serif; 
+	font-size: 17px;
+
+}
+</style>
+<title>
+	Hip Hop Goblin
+</title>
+<!--link href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:regular' rel='stylesheet' type='text/css'-->
+<link href="/static/skin/jplayer.css" rel="stylesheet" type="text/css" />
+<link href="/static/skin/default.css" rel="stylesheet" type="text/css" />
+<!--link href="/static/skin/gfdynamicfeedcontrol.css" rel="stylesheet" type="text/css" /-->
+<link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="/static/skin/jquery.fancybox-1.3.1.css" media="screen" />
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-17802919-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</head>
+<body>
+
+<div class="menu">
+	<ul>
+		<li>{{user.username}}</li>
+		<li>{{liked_count}}</li>
+		<li><a href="#">My Playlists</a>
+			<ul>
+				<li><a onclick="updatePlayer(1);" href="#">Party Mix</a></li>
+				<li><a onclick="updatePlayer(2);" href="#">Fresh Stuff</a></li>
+				<li><a onclick="updatePlayer(3);" href="#">Underground</a></li>
+			</ul>
+		</li>
+		<li><a onclick="updatePlayer(0);" href="#">My Liked Songs</a></li>
+	</ul>
+</div>
+<!--div id="header">
+	<div id="login">
+		<form method=post id='login_form' action='/login/'>{% csrf_token %}
+			{{login.as_table}}
+		</form>
+	</div><a href="#" class="login_text" onClick="$('#login_form').submit();">Login</a> <a id="inline" href="#register_form" class="register_text">Register</a>
+	<ul id="jsddm">
+	    <li><a href="#">My Playlists</a>
+	        <ul>
+	            <li><a onclick="updatePlayer(1);" href="#">Partay Mix</a></li>
+	            <li><a onclick="updatePlayer(2);" href="#">New Stuff</a></li>
+	            <li><a onclick="updatePlayer(3);" href="#">Underground Stuff</a></li>
+	        </ul>
+	    </li>
+	   <li><a onclick="updatePlayer(0);" href="#">My Liked Songs</a>
+	</ul>
+
+<div id="search">
+		<form>{% csrf_token %}
+			<input type="text">
+			<input class="button" type="submit" value="Search">
+		</form>
+	</div>
+</div-->
+<table id="container">
+<tr>
+<td style="width:300px;">
+<div class="side"><h2>sick beats, dope rhymes</h2><hr style="width:20em;height:1px;border:0" color="#fff">
+A playlist of the newest flow - sign up free and join the battle, hype your favorite raps, and share your own playlists.<br><br>Remember us? The Goblin is back, check out our <a href="#" style="text-decoration:underline;">new features</a>!<br><br><br>You just heard:<br><a id="previous" style="text-decoration:underline;font-color:#445;">&laquo;&nbsp;Wiz Khalifa - In the Cut</a>
+</div>
+</td>
+<td rowspan=2>
+<div id="wrapper">
+	<div id="logo"><h1><img src="/static/skin/om.png" width=40px>&nbsp;&nbsp;hip hop goblin</h1>
+	</div>
+	<div id="audioplayer">
+		<div id="heart"><div id="count">23</div>&nbsp;&nbsp;&nbsp;<a href="#" onClick="hearted()" id="h_a">&hearts;</a></div>
+		<div id="main">
+			<div id="jquery_jplayer"></div>
+			<div class="jp-single-player">
+				<div class="jp-interface"> 
+					<div class="jp-progress">
+						<div id="jplayer_load_bar">
+							<div id="jplayer_play_bar"></div>
+						</div>
+					</div>
+					<div id="times">
+						<div id="jplayer_play_time"></div>
+						<div id="jplayer_total_time"></div>
+					</div>
+					<div id="content"><span id="title"></span><br><span id="artist"></span></div>
+					<div id="songid" style="display:none;"></div>	
+				</div>
+			</div>
+		</div>
+		<div id="lowercontrols">
+			<div id="lowerleft">
+			{% for song in liked %}
+
+			{{song}}<br>
+			{% endfor %}
+			</div>
+			<!--div id="lowerright">
+				<a href="#">My Liked Songs</a><br><br>
+				<a href="#">Playlist #1</a><br><br>
+				<a href="#">Partay Mix</a><br><br>
+			</div-->
+		</div>
+	</div>
+	<div id="expander">
+		<div id="buttons"> 
+			<a href="javascript:void(0);" id="null" tabindex="1">&nbsp;&nbsp;&nbsp;</a>
+			<a href="javascript:void(0);" id="jplayer_play" tabindex="1">Play</a>
+			<a href="javascript:void(0);" id="jplayer_pause" tabindex="1">Pause</a>
+			<a href="javascript:void(0);" id="jplayer_next" class="hide">Next</a>
+		</div>
+		<a href="#" onClick="expand_div()"><div id="exp_button">more</div></a>
+	</div>
+
+<div id="extras">
+<a href="#" id="join" onClick="highlight();">Join the Battle</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="http://www.facebook.com/#!/pages/HipHopGoblin/145238778821322" target=_blank><img src="/static/skin/facebook.png" width=20></a>&nbsp;
+<a href="http://twitter.com/hiphopgoblin" target=_blank><img src="/static/skin/twitter.png" width=20></a>&nbsp;
+<a href="http://reddit.com/r/hiphopgoblin" target=_blank><img src="/static/skin/reddit_icon.png" width=25></a>
+</div>
+
+<a href="#" onClick="$.fancyBox('#earth');"><img id="earth" src="/static/ssc_galaxy.jpg" width="90%" style="margin-right:5%;margin-left:5%;margin-top:10%;opacity:1.0;display:none;"></a>
+<br><br><div id="rightnav">
+<a href="#">Sling rhymes, win cash</a><br><br><a href="#">Go deeper underground</a><br><br><a href="#">Find New Artists</a><br><br><a href="#">Contact us</a><br><br></div>
+</td>
+<td>
+</div>
+</td>
+</tr>
+<tr height="100em">
+<td><div class="side"><h2>hottest tracks</h2><hr style="width:100%;height:1px;border:0" color="#e8e8e8">
+	<table id="topsongs">
+	{% for song in top %}
+	<tr class="row"><td><a href="#song" onClick="next({{song.id}})">{{ song.title }}</a></td></tr>
+	{% endfor %}
+	</table>
+	<br><br>
+</div></td>
+<td><div class="side"><h2>goblin blog</h2><div id="feedControl2">Loading...</div></div>
+</td></tr>
+</table>
+<div style="display:none;padding:20px 0 0 50px;width:400px;">
+	<form method=post id='login_form' action='/login/'>{% csrf_token %}
+	        <div style="background-color:#757575;color:white;">
+		<span></span><br/>
+		<span style="margin-left:10px;font-family:'DroidSansRegular',arial,serif;font-size:25px;">HipHopGoblin Login</span><br/>
+		<span style="margin-left:10px;font-family:'DroidSansRegular',Arial, serif;font-size:16px;">Welcome back to the Goblin!</span><br/>  
+		<span style="margin-left:10px;font-family:'DroidSansRegular',Arial, serif;font-size:16px;">Login for quick access to your playlists and liked music</span><br/><br/>
+		<span style="margin-left:10px;font-family:'DroidSansRegular',Arial, serif;font-size:16px;">Don't have an account?  <a style="color:white;text-decoration:underline;" id="fregister" href="#register_form">Register here</a></span><br/>
+		<span></span><br/>
+		</div>
+		<div style="margin-left:60px;">
+			{{login.as_p}}
+		</div>
+		<input class="submit" type="submit" value="Login">
+	</form>
+
+	<form id="register_form" method="post" action="/register/">{% csrf_token %}
+	    <p class="form_error" id="err_required1">All fields are required!</p>
+	    <p class="form_error" id="err_required2">Mismatched passwords!</p>
+	    <p class="form_error" id="err_required3">Improperly formatted email address!</p>
+	        <div style="background-color:#757575;color:white;">
+		<span></span><br/>
+		<span style="margin-left:10px;font-family:'DroidSansRegular',arial,serif;font-size:25px;">Register for HipHopGoblin</span><br/>
+		<span style="margin-left:10px;font-family:'DroidSansRegular',Arial,serif;font-size:16px;">Heart your favorite tracks, add them to your personal playlist </span><BR/>
+		<span style="margin-left:10px;font-family:'DroidSansRegular',Arial, serif;font-size:16px;">and share them with your friends</span><br/><br/>
+		<span style="margin-left:10px;font-family:'DroidSansRegular',Arial, serif;font-size:16px;">Already have an account?  <a style="color:white;text-decoration:underline;" id="flogin" href="#login_form">Login here</a></span><br/>
+		<span></span><br/>
+		</div>
+		<div style="margin-left:60px;">
+		{{register.as_p}}
+		</div>
+		<input class="submit" type="submit" value="Signup"> <input class="clearform" type="reset" value="Clear">
+	</form>
+</div>
+</body>
+</html>
